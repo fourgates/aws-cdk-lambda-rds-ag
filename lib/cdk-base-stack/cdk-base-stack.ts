@@ -66,13 +66,24 @@ export class CdkBaseStack extends cdk.Stack {
         subnetType: ec2.SubnetType.PUBLIC,
       },
       instanceIdentifier: `${props?.stage}`,
-      maxAllocatedStorage: 200,
+      maxAllocatedStorage: 50,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      deletionProtection: false,
       securityGroups: [this.defaultSecurityGroup],
       credentials: rds.Credentials.fromSecret(this.databaseCredentialsSecret), // Get both username and password from existing secret
     }
 
     // create the instance
     this.rdsInstance = new rds.DatabaseInstance(this, `${props?.stage}-instance`, rdsConfig);
+
+    // Create an RDS Proxy
+    // https://github.com/cdk-patterns/serverless/tree/main/the-rds-proxy/typescript
+    // const proxy = this.rdsInstance.addProxy(id+'-proxy', {
+    //   secrets: [this.databaseCredentialsSecret],
+    //   debugLogging: true,
+    //   vpc: this.vpc,
+    //   securityGroups: [this.defaultSecurityGroup]
+    // });    
 
     // output the endpoint so we can connect!
     new cdk.CfnOutput(this, 'RDS Endpoint', { value: this.rdsInstance.dbInstanceEndpointAddress });     

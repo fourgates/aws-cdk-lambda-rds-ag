@@ -5,7 +5,7 @@ var AWS = require('aws-sdk'),
     pgClient;
 
 // Create a Secrets Manager client
-var client = new AWS.SecretsManager({
+var secretClient = new AWS.SecretsManager({
     region: region
 });
 
@@ -13,7 +13,7 @@ exports.handler = async (event, context, callback) => {
     // cache the secret
     if(!secretParams){
         // get secret string from secret manager
-        const secretValue = await client.getSecretValue({ SecretId: process.env.SECRET_NAME }).promise();
+        const secretValue = await secretClient.getSecretValue({ SecretId: process.env.SECRET_NAME }).promise();
         secretParams = JSON.parse(secretValue.SecretString);
     }
     // cache the client

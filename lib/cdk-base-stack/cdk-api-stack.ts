@@ -41,7 +41,8 @@ export class CdkApiStack extends cdk.Stack {
         getQueryFunction.role?.addManagedPolicy(
             ManagedPolicy.fromAwsManagedPolicyName('SecretsManagerReadWrite')
         )
-        
+        // this is a better way to do this
+        // databaseCredentialsSecret.grantRead(rdsLambda);
         this.secretEndpoint = props.vpc.addInterfaceEndpoint('secret-gateway', {
             service: InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
             securityGroups: [props.securityGroup],
